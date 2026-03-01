@@ -1,0 +1,47 @@
+{
+  "actorSpecification": 1,
+  "name": "illinois-dcfs-childcare-scraper",
+  "title": "Illinois DCFS Childcare Scraper",
+  "description": "Scrapes licensed childcare facilities from the Illinois DCFS/IL Gateways database",
+  "version": "1.0.0",
+  "buildTag": "latest",
+  "environmentVariables": {},
+  "dockerfile": "./Dockerfile",
+  "readme": "./README.md",
+  "input": "./INPUT_SCHEMA.json",
+  "storages": {
+    "dataset": {
+      "actorSpecification": 1,
+      "title": "Illinois Childcare Facilities",
+      "views": {
+        "facilities": {
+          "title": "Facilities",
+          "transformation": {
+            "fields": [
+              "name",
+              "address",
+              "city",
+              "zip",
+              "phone",
+              "licenseNumber",
+              "licenseStatus",
+              "capacity",
+              "type"
+            ]
+          },
+          "display": {
+            "component": "table",
+            "properties": {
+              "name": { "label": "Name", "format": "text" },
+              "address": { "label": "Address", "format": "text" },
+              "city": { "label": "City", "format": "text" },
+              "phone": { "label": "Phone", "format": "text" },
+              "licenseStatus": { "label": "Status", "format": "text" },
+              "capacity": { "label": "Capacity", "format": "number" }
+            }
+          }
+        }
+      }
+    }
+  }
+}
