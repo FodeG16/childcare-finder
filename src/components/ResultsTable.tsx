@@ -38,7 +38,7 @@ export default function ResultsTable({ facilities, isLoading, onCompare }: Resul
   const [expandedFacilities, setExpandedFacilities] = useState<Set<string>>(new Set());
   const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
   const [visibleColumns, setVisibleColumns] = useState<Set<ColumnKey>>(
-    new Set(['name', 'type', 'distance', 'ages', 'programSchedule', 'programHours', 'programCost', 'enrollmentStatus', 'rating'])
+    new Set<ColumnKey>(['name', 'type', 'distance', 'ages', 'programSchedule', 'programHours', 'programCost', 'enrollmentStatus', 'rating'])
   );
   const [showColumnSelector, setShowColumnSelector] = useState(false);
 
