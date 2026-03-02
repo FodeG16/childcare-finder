@@ -95,3 +95,4 @@ GOOGLE_MAPS_API_KEY=your-api-key
 # Apify (for scrapers)
 APIFY_API_TOKEN=your-token
 ```
+ 
