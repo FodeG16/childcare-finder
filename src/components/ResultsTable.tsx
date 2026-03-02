@@ -42,6 +42,8 @@ export default function ResultsTable({ facilities, isLoading, onCompare }: Resul
   );
   const [showColumnSelector, setShowColumnSelector] = useState(false);
 
+  const isVisible = (col: ColumnKey) => visibleColumns.has(col);
+
   const totalPrograms = useMemo(() => 
     facilities.reduce((sum, f) => sum + f.programs.length, 0), 
     [facilities]
@@ -154,13 +156,11 @@ export default function ResultsTable({ facilities, isLoading, onCompare }: Resul
     const minAge = Math.min(...programs.map(p => p.ageMinMonths));
     const maxAge = Math.max(...programs.map(p => p.ageMaxMonths));
     
-    // Find the lowest cost program and use its period
     const programsWithCost = programs.filter(p => p.costAmount !== null);
     let minCostProgram: Program | null = null;
     let maxCostProgram: Program | null = null;
     
     if (programsWithCost.length > 0) {
-      // Sort by normalized monthly cost to find min/max
       const sorted = [...programsWithCost].sort((a, b) => {
         const aCost = a.costPeriod === 'yearly' ? (a.costAmount! / 12) : a.costAmount!;
         const bCost = b.costPeriod === 'yearly' ? (b.costAmount! / 12) : b.costAmount!;
@@ -227,31 +227,46 @@ export default function ResultsTable({ facilities, isLoading, onCompare }: Resul
             <tr className="bg-gray-50 border-b border-gray-200">
               <th className="w-6 px-1 py-1.5"></th>
               <th className="w-5 px-0.5 py-1.5"></th>
-              <th className="text-left px-1.5 py-1.5 font-semibold text-gray-700 min-w-[140px]">
-                <button onClick={() => handleSort('name')} className="flex items-center gap-0.5 hover:text-gray-900">
-                  Facility / Program<SortIcon field="name" />
-                </button>
-              </th>
-              <th className="text-left px-1.5 py-1.5 font-semibold text-gray-700">Type</th>
-              <th className="text-left px-1.5 py-1.5 font-semibold text-gray-700">
-                <button onClick={() => handleSort('distance')} className="flex items-center gap-0.5 hover:text-gray-900">
-                  Dist<SortIcon field="distance" />
-                </button>
-              </th>
-              <th className="text-left px-1.5 py-1.5 font-semibold text-gray-700">Ages</th>
-              <th className="text-left px-1.5 py-1.5 font-semibold text-gray-700">Schedule</th>
-              <th className="text-left px-1.5 py-1.5 font-semibold text-gray-700">Hours</th>
-              <th className="text-left px-1.5 py-1.5 font-semibold text-gray-700">
-                <button onClick={() => handleSort('cost')} className="flex items-center gap-0.5 hover:text-gray-900">
-                  Cost<SortIcon field="cost" />
-                </button>
-              </th>
-              <th className="text-left px-1.5 py-1.5 font-semibold text-gray-700">Status</th>
-              <th className="text-left px-1.5 py-1.5 font-semibold text-gray-700">
-                <button onClick={() => handleSort('rating')} className="flex items-center gap-0.5 hover:text-gray-900">
-                  Rating<SortIcon field="rating" />
-                </button>
-              </th>
+              {isVisible('name') && (
+                <th className="text-left px-1.5 py-1.5 font-semibold text-gray-700 min-w-[140px]">
+                  <button onClick={() => handleSort('name')} className="flex items-center gap-0.5 hover:text-gray-900">
+                    Facility / Program<SortIcon field="name" />
+                  </button>
+                </th>
+              )}
+              {isVisible('type') && <th className="text-left px-1.5 py-1.5 font-semibold text-gray-700">Type</th>}
+              {isVisible('distance') && (
+                <th className="text-left px-1.5 py-1.5 font-semibold text-gray-700">
+                  <button onClick={() => handleSort('distance')} className="flex items-center gap-0.5 hover:text-gray-900">
+                    Dist<SortIcon field="distance" />
+                  </button>
+                </th>
+              )}
+              {isVisible('neighborhood') && <th className="text-left px-1.5 py-1.5 font-semibold text-gray-700">Area</th>}
+              {isVisible('ages') && <th className="text-left px-1.5 py-1.5 font-semibold text-gray-700">Ages</th>}
+              {isVisible('programSchedule') && <th className="text-left px-1.5 py-1.5 font-semibold text-gray-700">Schedule</th>}
+              {isVisible('programHours') && <th className="text-left px-1.5 py-1.5 font-semibold text-gray-700">Hours</th>}
+              {isVisible('facilityHours') && <th className="text-left px-1.5 py-1.5 font-semibold text-gray-700">Facility Hrs</th>}
+              {isVisible('programCost') && (
+                <th className="text-left px-1.5 py-1.5 font-semibold text-gray-700">
+                  <button onClick={() => handleSort('cost')} className="flex items-center gap-0.5 hover:text-gray-900">
+                    Cost<SortIcon field="cost" />
+                  </button>
+                </th>
+              )}
+              {isVisible('enrollmentStatus') && <th className="text-left px-1.5 py-1.5 font-semibold text-gray-700">Status</th>}
+              {isVisible('enrollmentDeadline') && <th className="text-left px-1.5 py-1.5 font-semibold text-gray-700">Deadline</th>}
+              {isVisible('schoolYear') && <th className="text-left px-1.5 py-1.5 font-semibold text-gray-700">School Year</th>}
+              {isVisible('rating') && (
+                <th className="text-left px-1.5 py-1.5 font-semibold text-gray-700">
+                  <button onClick={() => handleSort('rating')} className="flex items-center gap-0.5 hover:text-gray-900">
+                    Rating<SortIcon field="rating" />
+                  </button>
+                </th>
+              )}
+              {isVisible('transportation') && <th className="text-left px-1.5 py-1.5 font-semibold text-gray-700">Transport</th>}
+              {isVisible('meals') && <th className="text-left px-1.5 py-1.5 font-semibold text-gray-700">Meals</th>}
+              {isVisible('languages') && <th className="text-left px-1.5 py-1.5 font-semibold text-gray-700">Languages</th>}
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
@@ -267,39 +282,58 @@ export default function ResultsTable({ facilities, isLoading, onCompare }: Resul
                       <ChevronRight className={`w-3.5 h-3.5 text-gray-400 transition-transform ${isExpanded ? 'rotate-90' : ''}`} />
                     </td>
                     <td className="px-0.5 py-1.5"></td>
-                    <td className="px-1.5 py-1.5">
-                      <div className="font-medium text-gray-900 leading-tight">{facility.name}</div>
-                      <div className="text-[10px] text-gray-500">{facility.neighborhood}</div>
-                    </td>
-                    <td className="px-1.5 py-1.5">
-                      <div className="flex flex-wrap gap-0.5">
-                        {facility.facilityTypes.slice(0, 2).map((t) => (
-                          <span key={t} className="px-1 py-0.5 text-[10px] rounded bg-gray-100 text-gray-600 capitalize">{t.replace('-', ' ')}</span>
-                        ))}
-                      </div>
-                    </td>
-                    <td className="px-1.5 py-1.5 text-gray-600 whitespace-nowrap">{facility.distanceMiles?.toFixed(1)}mi</td>
-                    <td className="px-1.5 py-1.5 text-gray-600 whitespace-nowrap">{formatAgeRange(summary.minAge, summary.maxAge)}</td>
-                    <td className="px-1.5 py-1.5 text-gray-500 italic">{facility.programs.length} prog</td>
-                    <td className="px-1.5 py-1.5 text-gray-500 whitespace-nowrap">
-                      {facility.operatingHours ? `${facility.operatingHours.open.replace(' ', '')}-${facility.operatingHours.close.replace(' ', '')}` : '—'}
-                    </td>
-                    <td className="px-1.5 py-1.5 text-gray-600 whitespace-nowrap">
-                      {summary.minCostProgram !== null 
-                        ? (summary.minCostProgram === summary.maxCostProgram 
-                            ? formatCost(summary.minCostProgram.costAmount, summary.minCostProgram.costPeriod)
-                            : `${formatCost(summary.minCostProgram.costAmount, summary.minCostProgram.costPeriod)}+`)
-                        : 'Contact'
-                      }
-                    </td>
-                    <td className="px-1.5 py-1.5">
-                      {summary.hasOpen ? <span className="text-green-600 font-medium">Open</span> : summary.hasWaitlist ? <span className="text-yellow-600">Waitlist</span> : <span className="text-gray-400">Closed</span>}
-                    </td>
-                    <td className="px-1.5 py-1.5">
-                      {facility.rating ? (
-                        <span className="flex items-center gap-0.5"><Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />{facility.rating}</span>
-                      ) : <span className="text-gray-400">—</span>}
-                    </td>
+                    {isVisible('name') && (
+                      <td className="px-1.5 py-1.5">
+                        <div className="font-medium text-gray-900 leading-tight">{facility.name}</div>
+                        <div className="text-[10px] text-gray-500">{facility.neighborhood}</div>
+                      </td>
+                    )}
+                    {isVisible('type') && (
+                      <td className="px-1.5 py-1.5">
+                        <div className="flex flex-wrap gap-0.5">
+                          {facility.facilityTypes.slice(0, 2).map((t) => (
+                            <span key={t} className="px-1 py-0.5 text-[10px] rounded bg-gray-100 text-gray-600 capitalize">{t.replace('-', ' ')}</span>
+                          ))}
+                        </div>
+                      </td>
+                    )}
+                    {isVisible('distance') && <td className="px-1.5 py-1.5 text-gray-600 whitespace-nowrap">{facility.distanceMiles?.toFixed(1)}mi</td>}
+                    {isVisible('neighborhood') && <td className="px-1.5 py-1.5 text-gray-600">{facility.neighborhood || '—'}</td>}
+                    {isVisible('ages') && <td className="px-1.5 py-1.5 text-gray-600 whitespace-nowrap">{formatAgeRange(summary.minAge, summary.maxAge)}</td>}
+                    {isVisible('programSchedule') && <td className="px-1.5 py-1.5 text-gray-500 italic">{facility.programs.length} prog</td>}
+                    {isVisible('programHours') && <td className="px-1.5 py-1.5 text-gray-500">—</td>}
+                    {isVisible('facilityHours') && (
+                      <td className="px-1.5 py-1.5 text-gray-500 whitespace-nowrap">
+                        {facility.operatingHours ? `${facility.operatingHours.open.replace(' ', '')}-${facility.operatingHours.close.replace(' ', '')}` : '—'}
+                      </td>
+                    )}
+                    {isVisible('programCost') && (
+                      <td className="px-1.5 py-1.5 text-gray-600 whitespace-nowrap">
+                        {summary.minCostProgram !== null 
+                          ? (summary.minCostProgram === summary.maxCostProgram 
+                              ? formatCost(summary.minCostProgram.costAmount, summary.minCostProgram.costPeriod)
+                              : `${formatCost(summary.minCostProgram.costAmount, summary.minCostProgram.costPeriod)}+`)
+                          : 'Contact'
+                        }
+                      </td>
+                    )}
+                    {isVisible('enrollmentStatus') && (
+                      <td className="px-1.5 py-1.5">
+                        {summary.hasOpen ? <span className="text-green-600 font-medium">Open</span> : summary.hasWaitlist ? <span className="text-yellow-600">Waitlist</span> : <span className="text-gray-400">Closed</span>}
+                      </td>
+                    )}
+                    {isVisible('enrollmentDeadline') && <td className="px-1.5 py-1.5 text-gray-500">—</td>}
+                    {isVisible('schoolYear') && <td className="px-1.5 py-1.5 text-gray-500">—</td>}
+                    {isVisible('rating') && (
+                      <td className="px-1.5 py-1.5">
+                        {facility.rating ? (
+                          <span className="flex items-center gap-0.5"><Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />{facility.rating}</span>
+                        ) : <span className="text-gray-400">—</span>}
+                      </td>
+                    )}
+                    {isVisible('transportation') && <td className="px-1.5 py-1.5">{facility.hasTransportation ? '✓' : '—'}</td>}
+                    {isVisible('meals') && <td className="px-1.5 py-1.5">{facility.mealsProvided ? '✓' : '—'}</td>}
+                    {isVisible('languages') && <td className="px-1.5 py-1.5 text-gray-600">{facility.languages?.join(', ') || '—'}</td>}
                   </tr>
 
                   {/* Program rows */}
@@ -312,15 +346,22 @@ export default function ResultsTable({ facilities, isLoading, onCompare }: Resul
                         <td className="px-0.5 py-1" onClick={(e) => e.stopPropagation()}>
                           <input type="checkbox" checked={isSelected} onChange={() => toggleRowSelection(rowKey)} disabled={!isSelected && selectedRows.size >= 4} className="w-3 h-3 rounded border-gray-300 text-blue-600" />
                         </td>
-                        <td className="px-1.5 py-1 pl-5 text-gray-700">{program.name}</td>
-                        <td className="px-1.5 py-1"><span className="px-1 py-0.5 text-[10px] rounded bg-blue-50 text-blue-700 capitalize">{program.type.replace('-', ' ')}</span></td>
-                        <td className="px-1.5 py-1 text-gray-300">—</td>
-                        <td className="px-1.5 py-1 text-gray-600 whitespace-nowrap">{formatAgeRange(program.ageMinMonths, program.ageMaxMonths)}</td>
-                        <td className="px-1.5 py-1 text-gray-600 whitespace-nowrap">{formatSchedule(program)}</td>
-                        <td className="px-1.5 py-1 text-gray-600 whitespace-nowrap">{program.startTime.replace(' ', '')}-{program.endTime.replace(' ', '')}</td>
-                        <td className="px-1.5 py-1 text-gray-900 font-medium whitespace-nowrap">{formatCost(program.costAmount, program.costPeriod)}</td>
-                        <td className="px-1.5 py-1"><EnrollmentBadge status={program.enrollmentStatus} /></td>
-                        <td className="px-1.5 py-1 text-gray-400">{program.enrollmentDeadline ? <span className="text-orange-600 text-[10px]">{program.enrollmentDeadline}</span> : '—'}</td>
+                        {isVisible('name') && <td className="px-1.5 py-1 pl-5 text-gray-700">{program.name}</td>}
+                        {isVisible('type') && <td className="px-1.5 py-1"><span className="px-1 py-0.5 text-[10px] rounded bg-blue-50 text-blue-700 capitalize">{program.type.replace('-', ' ')}</span></td>}
+                        {isVisible('distance') && <td className="px-1.5 py-1 text-gray-300">—</td>}
+                        {isVisible('neighborhood') && <td className="px-1.5 py-1 text-gray-300">—</td>}
+                        {isVisible('ages') && <td className="px-1.5 py-1 text-gray-600 whitespace-nowrap">{formatAgeRange(program.ageMinMonths, program.ageMaxMonths)}</td>}
+                        {isVisible('programSchedule') && <td className="px-1.5 py-1 text-gray-600 whitespace-nowrap">{formatSchedule(program)}</td>}
+                        {isVisible('programHours') && <td className="px-1.5 py-1 text-gray-600 whitespace-nowrap">{program.startTime.replace(' ', '')}-{program.endTime.replace(' ', '')}</td>}
+                        {isVisible('facilityHours') && <td className="px-1.5 py-1 text-gray-300">—</td>}
+                        {isVisible('programCost') && <td className="px-1.5 py-1 text-gray-900 font-medium whitespace-nowrap">{formatCost(program.costAmount, program.costPeriod)}</td>}
+                        {isVisible('enrollmentStatus') && <td className="px-1.5 py-1"><EnrollmentBadge status={program.enrollmentStatus} /></td>}
+                        {isVisible('enrollmentDeadline') && <td className="px-1.5 py-1 text-gray-600">{program.enrollmentDeadline ? <span className="text-orange-600">{program.enrollmentDeadline}</span> : '—'}</td>}
+                        {isVisible('schoolYear') && <td className="px-1.5 py-1 text-gray-600">{program.schoolYearStart ? `${program.schoolYearStart}` : '—'}</td>}
+                        {isVisible('rating') && <td className="px-1.5 py-1 text-gray-300">—</td>}
+                        {isVisible('transportation') && <td className="px-1.5 py-1 text-gray-300">—</td>}
+                        {isVisible('meals') && <td className="px-1.5 py-1 text-gray-300">—</td>}
+                        {isVisible('languages') && <td className="px-1.5 py-1 text-gray-300">—</td>}
                       </tr>
                     );
                   })}
@@ -328,7 +369,7 @@ export default function ResultsTable({ facilities, isLoading, onCompare }: Resul
                   {/* Facility contact row */}
                   {isExpanded && (
                     <tr key={`${facility.id}-contact`} className="bg-blue-50/50 border-t border-blue-100">
-                      <td colSpan={11} className="px-3 py-1.5">
+                      <td colSpan={visibleColumns.size + 2} className="px-3 py-1.5">
                         <div className="flex flex-wrap gap-4 text-[11px]">
                           <span className="flex items-center gap-1 text-gray-600"><MapPin className="w-3 h-3" />{facility.address}, {facility.city} {facility.zip}</span>
                           {facility.phone && <a href={`tel:${facility.phone}`} className="flex items-center gap-1 text-blue-600 hover:underline"><Phone className="w-3 h-3" />{facility.phone}</a>}

@@ -62,16 +62,24 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: programError.message }, { status: 500 });
     }
 
-    // Filter facilities by type if specified
+    // Filter facilities by type if specified - check BOTH facility_types AND program types
     let filteredFacilities = facilities;
+    let filteredPrograms = programs || [];
+    
     if (facilityTypes.length > 0) {
+      // First filter programs by program_type
+      filteredPrograms = filteredPrograms.filter((p: any) =>
+        facilityTypes.includes(p.program_type)
+      );
+      
+      // Then only keep facilities that have matching programs
+      const facilityIdsWithMatchingPrograms = new Set(filteredPrograms.map((p: any) => p.facility_id));
       filteredFacilities = facilities.filter((f: any) =>
-        f.facility_types.some((t: string) => facilityTypes.includes(t))
+        facilityIdsWithMatchingPrograms.has(f.id)
       );
     }
 
     // Filter programs by max cost if specified
-    let filteredPrograms = programs || [];
     if (maxCost !== undefined) {
       filteredPrograms = filteredPrograms.filter((p: any) => {
         if (p.cost_amount === null) return true; // Include "contact for pricing"
