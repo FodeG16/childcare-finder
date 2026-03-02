@@ -322,8 +322,16 @@ export default function ResultsTable({ facilities, isLoading, onCompare }: Resul
                         {summary.hasOpen ? <span className="text-green-600 font-medium">Open</span> : summary.hasWaitlist ? <span className="text-yellow-600">Waitlist</span> : <span className="text-gray-400">Closed</span>}
                       </td>
                     )}
-                    {isVisible('enrollmentDeadline') && <td className="px-1.5 py-1.5 text-gray-500">—</td>}
-                    {isVisible('schoolYear') && <td className="px-1.5 py-1.5 text-gray-500">—</td>}
+                    {isVisible('enrollmentDeadline') && (
+                      <td className="px-1.5 py-1.5 text-gray-500">
+                        {facility.programs.find(p => p.enrollmentDeadline)?.enrollmentDeadline || '—'}
+                      </td>
+                    )}
+                    {isVisible('schoolYear') && (
+                      <td className="px-1.5 py-1.5 text-gray-500">
+                        {facility.programs.find(p => p.schoolYearStart)?.schoolYearStart || '—'}
+                      </td>
+                    )}
                     {isVisible('rating') && (
                       <td className="px-1.5 py-1.5">
                         {facility.rating ? (
