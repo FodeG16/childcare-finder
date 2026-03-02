@@ -301,7 +301,11 @@ export default function ResultsTable({ facilities, isLoading, onCompare }: Resul
                     {isVisible('neighborhood') && <td className="px-1.5 py-1.5 text-gray-600">{facility.neighborhood || '—'}</td>}
                     {isVisible('ages') && <td className="px-1.5 py-1.5 text-gray-600 whitespace-nowrap">{formatAgeRange(summary.minAge, summary.maxAge)}</td>}
                     {isVisible('programSchedule') && <td className="px-1.5 py-1.5 text-gray-500 italic">{facility.programs.length} prog</td>}
-                    {isVisible('programHours') && <td className="px-1.5 py-1.5 text-gray-500">—</td>}
+                    {isVisible('programHours') && (
+                      <td className="px-1.5 py-1.5 text-gray-500 whitespace-nowrap">
+                        {facility.operatingHours ? `${facility.operatingHours.open.replace(' ', '')}-${facility.operatingHours.close.replace(' ', '')}` : '—'}
+                      </td>
+                    )}
                     {isVisible('facilityHours') && (
                       <td className="px-1.5 py-1.5 text-gray-500 whitespace-nowrap">
                         {facility.operatingHours ? `${facility.operatingHours.open.replace(' ', '')}-${facility.operatingHours.close.replace(' ', '')}` : '—'}
